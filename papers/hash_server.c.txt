@@ -1,0 +1,245 @@
+/*  This program is a part of vasabilab's educational notes.
+    Author: kasidit chanchio   
+            Department of Computer Science,
+            Thammasat University, THAILAND 
+            kasiditchanchio@gmail.com
+*/
+#include	<stdio.h>
+#include	<stdlib.h>
+#include	<stdint.h>
+#include	<string.h>
+#include	"uthash.h"
+
+typedef uint64_t ram_addr_t;
+
+typedef struct ram_node_t {
+  ram_addr_t 	ram_addr; // key
+  uint64_t 	data_size;
+  uint8_t 	priority;
+  uint8_t 	*contents;
+  UT_hash_handle hh;
+} ram_node_t;
+
+#define		TLC_NUM_MEMLOCK_PER_1GB		2048
+#define 	ONEGIGABYTES			(1024 * 1024 * 1024)
+
+#define 	TARGET_PAGE_BITS 12
+#define 	TARGET_PAGE_SIZE (1 << TARGET_PAGE_BITS)
+#define 	TARGET_PAGE_MASK ~(TARGET_PAGE_SIZE - 1)
+
+#define 	BASE_PRIORITY	0
+
+uint64_t	max_hash_table_size = 0;
+
+ram_node_t 	*ram_buffer = NULL;
+//uint64_t 	unit_data_size = 0;
+uint64_t	ram_buffer_num = 0;
+
+pthread_mutex_t *lock_array = NULL;
+uint64_t	lock_array_size = 0;
+
+#define LOCK_HASH_TABLE(addr) \
+	pthread_mutex_lock(&lock_array[(addr >> TARGET_PAGE_BITS)% lock_array_size])
+#define UNLOCK_HASH_TABLE(addr) \
+	pthread_mutex_unlock(&lock_array[(addr >> TARGET_PAGE_BITS) % lock_array_size])
+
+// stat 
+uint64_t 	num_old_data_write = 0;
+uint64_t 	num_new_data_write = 0;
+
+int hash_service_init(uint64_t hash_table_size);
+int set_data_to_hash(ram_addr_t addr, uint8_t *ptr, uint64_t data_size);
+uint8_t *get_data_from_hash(ram_addr_t addr, uint64_t *data_size);
+uint8_t *get_data_from_hash_priority(ram_addr_t addr, uint64_t *data_size, int pri);
+void hash_service_finish(void);
+
+int hash_service_init(uint64_t hash_table_size){
+
+	int i;
+	int ret = 0;
+
+	max_hash_table_size = hash_table_size;
+	lock_array_size = (((int)(hash_table_size / ONEGIGABYTES)) + 1)* TLC_NUM_MEMLOCK_PER_1GB;
+
+	lock_array = (pthread_mutex_t *) malloc(lock_array_size * 
+    				sizeof(pthread_mutex_t));
+
+    	for (i = 0; i < lock_array_size; i++)
+        	pthread_mutex_init((lock_array+i), NULL);  
+
+	num_old_data_write = 0;
+	num_new_data_write = 0;
+
+	return ret;
+}
+
+int set_data_to_hash(ram_addr_t addr, uint8_t *ptr, uint64_t data_size){
+	int ret;
+	ram_node_t *tmp_ptr;
+
+	// TLC: find page in the hash table
+	LOCK_HASH_TABLE(addr);
+
+	HASH_FIND_PTR(ram_buffer, &addr, tmp_ptr); 
+	if(tmp_ptr){
+	    if(tmp_ptr->data_size < data_size){
+		ret = 0;
+	    }
+	    else{
+	    	num_old_data_write++;		     
+	    	memcpy(tmp_ptr->contents, ptr, data_size);
+	    	ret = 2;	
+	    }
+	}
+	else{
+	    tmp_ptr = (ram_node_t *)malloc(sizeof(ram_node_t));
+	    tmp_ptr->ram_addr = addr;
+	    tmp_ptr->data_size = data_size;
+	    tmp_ptr->priority = BASE_PRIORITY;
+	    num_new_data_write++;
+	    tmp_ptr->contents = (uint8_t *)malloc(sizeof(uint8_t)*data_size);
+	    memcpy(tmp_ptr->contents, ptr, data_size);		
+	    HASH_ADD_PTR(ram_buffer, ram_addr, tmp_ptr);
+
+	    ram_buffer_num++;
+		    
+	    ret = 1;
+	}
+
+	UNLOCK_HASH_TABLE(addr);
+	
+	return ret;
+}
+
+int set_data_to_hash_priority(ram_addr_t addr, uint8_t *ptr, uint64_t data_size, int pri){
+	int ret;
+	ram_node_t *tmp_ptr;
+
+	// TLC: find page in the hash table
+	LOCK_HASH_TABLE(addr);
+
+	HASH_FIND_PTR(ram_buffer, &addr, tmp_ptr); 
+	if(tmp_ptr){
+	    if(tmp_ptr->data_size < data_size){
+		ret = 0;
+	    }
+	    else{
+		if(pri >= tmp_ptr->priority){
+	    	    tmp_ptr->priority = pri;
+	    	    num_old_data_write++;		     
+	    	    memcpy(tmp_ptr->contents, ptr, data_size);
+	    	    ret = 2;	
+		}
+		else{
+		    ret = -1;
+		}
+	    }
+	}
+	else{
+	    tmp_ptr = (ram_node_t *)malloc(sizeof(ram_node_t));
+	    tmp_ptr->ram_addr = addr;
+	    tmp_ptr->data_size = data_size;
+	    tmp_ptr->priority = pri;
+	    num_new_data_write++;
+	    tmp_ptr->contents = (uint8_t *)malloc(sizeof(uint8_t)*data_size);
+	    memcpy(tmp_ptr->contents, ptr, data_size);		
+	    HASH_ADD_PTR(ram_buffer, ram_addr, tmp_ptr);
+
+	    ram_buffer_num++;
+		    
+	    ret = 1;
+	}
+
+	UNLOCK_HASH_TABLE(addr);
+	
+	return ret;
+}
+
+uint8_t *get_data_from_hash(ram_addr_t addr, uint64_t *data_size){
+	uint8_t *ptr;
+	ram_node_t *tmp_ptr;
+
+	// TLC: find page in the hash table
+	LOCK_HASH_TABLE(addr);
+
+	HASH_FIND_PTR(ram_buffer, &addr, tmp_ptr); 
+	if(tmp_ptr){
+	    *data_size = tmp_ptr->data_size; 
+	    ptr = (uint8_t *)malloc(sizeof(uint8_t)*(*data_size));
+	    memcpy(ptr, tmp_ptr->contents, *data_size);
+	}
+	else ptr = NULL;
+
+	UNLOCK_HASH_TABLE(addr);
+	
+	return ptr;
+}
+
+uint8_t *get_data_from_hash_priority(ram_addr_t addr, uint64_t *data_size, int pri){
+	uint8_t *ptr;
+	ram_node_t *tmp_ptr;
+
+	// TLC: find page in the hash table
+	LOCK_HASH_TABLE(addr);
+
+	HASH_FIND_PTR(ram_buffer, &addr, tmp_ptr); 
+	if(tmp_ptr){
+	    if(tmp_ptr->priority == pri){
+	        *data_size = tmp_ptr->data_size; 
+	        ptr = (uint8_t *)malloc(sizeof(uint8_t)*(*data_size));
+	        memcpy(ptr, tmp_ptr->contents, *data_size);
+	    }
+	    else{
+	        ptr = NULL;
+	    }
+	}
+	else ptr = NULL;
+
+	UNLOCK_HASH_TABLE(addr);
+	
+	return ptr;
+}
+
+void hash_service_finish(void){
+    int i;
+    for (i = 0; i < lock_array_size; i++)
+        pthread_mutex_destroy(lock_array_size+i);
+    free(lock_array);
+}
+
+// Interfaces for operations on memory pages
+
+int put_page_to_hash(ram_addr_t addr, uint8_t *ptr);
+int put_page_to_hash_priority(ram_addr_t addr, uint8_t *ptr, int pri);
+uint8_t *get_page_from_hash(ram_addr_t addr);
+uint8_t *get_page_from_hash_priority(ram_addr_t addr, int pri);
+
+int put_page_to_hash(ram_addr_t addr, uint8_t *ptr){
+    return set_data_to_hash(addr, ptr, TARGET_PAGE_SIZE); 
+}
+
+int put_page_to_hash_priority(ram_addr_t addr, uint8_t *ptr, int pri){
+    return set_data_to_hash_priority(addr, ptr, TARGET_PAGE_SIZE, pri); 
+}
+
+uint8_t *get_page_from_hash(ram_addr_t addr){
+    uint8_t *ptr;
+    uint64_t data_size = 0;
+    ptr = get_data_from_hash(addr, &data_size); 
+    // Assertion
+    if(data_size != TARGET_PAGE_SIZE){
+	printf("get_page_from_hash: assertion on data_size = %" PRId64 " failed!\n", data_size); 
+    }
+    return ptr;
+}
+
+uint8_t *get_page_from_hash_priority(ram_addr_t addr, int pri){
+    uint8_t *ptr;
+    uint64_t data_size = 0;
+    ptr = get_data_from_hash_priority(addr, &data_size, pri); 
+    // Assertion
+    if(data_size != TARGET_PAGE_SIZE){
+	printf("get_page_from_hash_priority: assertion on data_size = %" PRId64 " failed!\n", data_size); 
+    }
+    return ptr;
+}
