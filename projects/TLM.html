@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head profile="http://www.w3.org/2005/10/profile">
+<link rel="icon" 
+      type="image/png" 
+      href="../images/labfavicon.png" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>vasabiLab | TLM: Time-Bound, Thread-Based Live Migration and Checkpointing of Virtual Machines</title>
+<link href="../css/style2.css" rel="stylesheet" type="text/css" />
+</head>
+<body >
+<!-- begin #container -->
+<div id="container">
+    <!-- begin #header -->
+    <div id="header">
+    	<div class="headerBackground"><h1></h1></div>
+        <div id="navcontainer">
+            <ul id="navlist">
+                <li><a href="../index.html">HOME</a></li>
+                <li><a href="../about.html">ABOUT</a></li>
+                <li id="active"><a href="../projects.html" id="current">PROJECTS</a></li>
+                <li><a href="../publications.html">PUBLICATIONS</a></li>
+                <li><a href="../people.html">PEOPLE</a></li>
+                <li><a href="../events.html">EVENTS</a></li>
+                <li><a href="../contact.html">CONTACT</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- end #header -->
+    <!-- begin #sidebar1 -->
+  <div id="sidebar">
+
+        <div id="sidebar2">
+        <h1>NEWS</h1>
+  <iframe src="http://www.facebook.com/plugins/likebox.php?id=135221053181397&amp;width=212&amp;connections=10&amp;stream=true&amp;header=true&amp;height=587" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:212px; height:587px;" allowtransparency="true"></iframe>
+        </div>
+
+        </div>
+    <!-- end #sidebar1 -->
+    <!-- begin #mainContent -->
+    <div id="mainContent3">
+            <h1>Time-Bound, Thread-Based Live Migration and Checkpointing of Virtual Machines</h1>
+            <img src="../images/logo/tlc3.png" alt="tlc/tlm" />	   
+<p><b><font color="orange">Source Code is available on github <a href="https://github.com/kasidit/tlc-qemu-kvm-1.0.0">here.</a></font></b></p>
+
+<p>Cloud service providers have been offering large scale Virtual Machine (VM) instances to serve users with high computing demands. Google Compute Engine, for examples, offers VMs with up to 8 CPU cores and 52 GB of memory in its “high-memory” instance type, targeting computation and memory intensive applications. In the clouds that offer such services, VM migration and checkpointing capabilities are important for efficient resource utilization and fault-resiliency. VM migration can be used to balance workloads among servers in a server pool, relocate VMs closer to data, or move VMs out of partially malfunction computers, etc. 
+
+<p>Despite these advantages, inventing migration mechanism for large, memory intensive VMs is a challenging task. Mainstream hypervisors such as Vmware, KVM, Xen, Hyper-V implement pre-copy live migration mechanism that does not perform well on VM with large, memory-intensive workloads. In its default operational mode, the mechanism could take very long periods of time to finish. On the other hand, users can customize certain migration parameters before migration; however, determining right parameter values for different application workloads is not easy. These limitations prohibit the applications of VM migration on memory-intensive VMs in real practices.
+
+<!--
+<p>The root causes of these problems lay in the principles behind the design of the existing VM migration and checkpointing mechanisms. Traditionally VM migration is viewed as second-rated operations comparing to VM computation. The pre-copy migration design is based on the thinking that migration operations should consume as little resources as possible and should not cause noticeable downtime to the computation side. As the results, the pre-copy mechanism is designed to operate as a part of hypervisor threads, and take only a short amount of time (30 millisec in KVM) after a longer burst of VM execution (100 millisec in KVM) to collectively transfer VM state to a destination machine.
+
+<p>Obviously, this limiting data transfer strategy is not suitable for VMs running memory-intensive workloads, where the rate of dirty page generation could be extremely high. Using the traditional pre-copy approach to migrate such the VMs would result in a long migration time, in which the migration will most likely finish after the memory-intensive applications on the VMs terminate. To alleviate this problem, the traditional mechanism allows users to fine-tune migration parameters such as data transfer rate and tolerable downtime values. However, identifying appropriate parameter values for different VM workloads is difficult. Slightly incorrect parameter values could cause live migration to either take a long time or abruptly stop the VM to perform migration offline. Many other solutions such as data compression and statistical analysis have been proposed; however, all of them are based on the pre-copy design and none of them can answer the problems.
+-->
+
+            <p>In the past two year, we have designed and implemented a novel <b>Time-bound, Thread-based VM live migration mechanism (TLM)</b> based on the following design principles: (i) VM migration must complete within a time-bound, (ii) during the migration, computing resources must be appropriately allocated and utilized to make the migration mechanism meets the first principle, (iii) the migration mechanism should be live and produce short downtime, and (iv) users should be allowed to adapt VM computation to fine-tune live migration.<br />
+            </p>
+            <h2>Software:</h2>
+            <p>We have incorporated the TLM mechanism into qemu-kvm-1.0.0 and created two versions of debian packages below. We hope that these packages are helpful for your works. Please feel free to let us know if you have any question or suggestion. Note that papers and more documentation will be available soon. Thank you for your interests.  
+            </p>
+            <ol>
+              <li>Download: <a href="https://github.com/kasidit/tlc-qemu-kvm-1.0.0">Source Code at Github</a><br />
+              <li>Download: <a href="tlc-kvm_0.1.0-0ubuntu1_amd64.deb">tlc-kvm_0.1.0-0ubuntu1_amd64.deb</a><br />
+              Requirements: ubuntu 12.04 desktop (64 bits)</li>
+              <li>Download: <a href="tlc-kvm-server_0.1.1-0ubuntu1_amd64.deb">tlc-kvm-server_0.1.1-0ubuntu1_amd64.deb</a><br />
+              Requirements: ubuntu 12.04 server (64 bits)</li>
+              <li>Documentation: <a href="tlc-kvm-user-0.1.2.html">Getting Start with tlc-kvm</a> (a new version is coming soon)</li>
+              <li>Youtube Videos: <a href="http://www.youtube.com/watch?v=MnJi0k_uFLk" target="_blank">installation</a>, <a href="http://www.youtube.com/watch?v=AjOX5Yy_3vA" target="_blank">simple migration</a> and <a href="http://blog.sushicloud.cs.tu.ac.th/?p=473" target="_blank">experiments on NPB Class D benchmarks</a></li>
+             </ol>
+              <br />
+              <p>
+              Copyright 2013 <em>Vasabilab. Kasidit Chanchio</em><br />
+              <a href="../index.html">Vasabilab</a>, Department of Computer Science, Faculty of Science & Technology, Thammasat University.<br />
+              Contact: kasiditchanchio@gmail.com</p>  
+              
+  </div>
+
+    <!-- end #mainContent -->
+      <br class="clearfloat" />
+      <!-- begin #footer -->
+  <div id="footer">
+    	<a href="http://www.cs.tu.ac.th" class="rss" alink><img src="../images/logo/cstulogo.jpg" alt="Department of Computer Science, Thammasat University" /></a>
+        <p>
+        <a href="../index.html" class="footerLink">Home</a> |
+        <a href="../about.html" class="footerLink">About</a> |
+        <a href="../projects.html" class="footerLink">Projects</a> |
+        <a href="../publications.html" class="footerLink">Publications</a> | 
+        <a href="../people.html" class="footerLink">People</a> | 
+        <a href="../events.html" class="footerLink">Events</a> |
+        <a href="../contact.html" class="footerLink">Contact</a><br/>
+        </p>
+    </div>
+    <!-- end #footer -->
+</div>
+<!-- end #container -->
+</body>
+</html>
