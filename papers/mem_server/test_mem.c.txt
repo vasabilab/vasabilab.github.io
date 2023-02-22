@@ -1,0 +1,150 @@
+/*  This program is a part of vasabilab's educational notes.
+    Author: kasidit chanchio   
+            Department of Computer Science,
+            Thammasat University, THAILAND 
+            kasiditchanchio@gmail.com
+*/
+
+#include	<stdio.h>
+#include	<stdlib.h>
+#include	<stdint.h>
+#include	<inttypes.h>
+#include	<string.h>
+#include	<pthread.h>
+
+#include 	"mem_server.h"
+
+#define 	DATA_LENGTH	4096
+#define		MEM_SIZE	4096*1024
+
+void *testing_t (void *t);
+
+main(int argc, char *argv[]){
+    int i, x, ret;
+    uint8_t *p;
+    uint64_t base_page_id, addr; 
+
+    int tid;
+    int num_threads; 
+    pthread_t *thr = NULL;
+    pthread_attr_t attr;
+    void *status;
+
+    mem_service_init(MEM_SIZE);
+
+    // Test prioritized setting/getting (new values do not replace old one)
+    printf("--Test prioritized setting/getting (new values do not replace old ones)--\n");
+
+    p = malloc(sizeof(uint8_t) * DATA_LENGTH);
+
+    base_page_id = 0x01; 
+
+    for(i = 0; i < 10; i++){
+	x = 10 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+    	addr = (base_page_id  + i) << TARGET_PAGE_BITS; 
+        ret = put_page_to_mem_priority(addr, p, 2); // priority is 2
+	printf(" first put 0x%" PRIx64 " ret = %d\n", addr, ret);
+
+	x = 20 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+        ret = put_page_to_mem_priority(addr, p, 1);  // priority is 1
+	printf(" second put 0x%" PRIx64 " ret = %d\n", addr, ret);
+    }
+    free(p);
+
+    for(i = 0; i < 10; i++){
+    	addr = (base_page_id  + i) << TARGET_PAGE_BITS; 
+        p = get_page_from_mem(addr); 
+	if (p) printf(" key=0x%" PRIx64 " > p[0]  = %d p[100] = %d p[500] = %d\n", addr, p[0], p[100], p[500]);
+	free(p);
+    }
+
+    // Test prioritized setting/getting (not overwrite)
+    printf("--Test prioritized setting/getting (overwrite old value)--\n");
+
+    p = malloc(sizeof(uint8_t) * DATA_LENGTH);
+    base_page_id = 0x02; 
+
+    for(i = 0; i < 10; i++){
+	x = 30 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+    	addr = (base_page_id  + i) << TARGET_PAGE_BITS; 
+        ret = put_page_to_mem_priority(addr, p, 1); // priority is 2
+	printf(" first put 0x%" PRIx64 " ret = %d\n", addr, ret);
+
+	x = 40 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+        ret = put_page_to_mem_priority(addr, p, 2);  // priority is 1
+	printf(" second put 0x%" PRIx64 " ret = %d\n", addr, ret);
+    }
+    free(p);
+
+    for(i = 0; i < 10; i++){
+    	addr = (base_page_id  + i) << TARGET_PAGE_BITS; 
+        p = get_page_from_mem(addr); 
+	if (p) printf(" key=0x%" PRIx64 " > p[0] = %d p[100] = %d p[500] = %d\n", addr, p[0], p[100], p[500]);
+	free(p);
+    }
+
+    // Test prioritized setting/getting (not overwrite)
+    printf("--Test prioritized setting/getting (multi-thread clients)--\n");
+
+    num_threads = 4;  // number of client threads
+
+    thr = (pthread_t *)malloc(num_threads * sizeof(pthread_t));
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE); 
+	 
+    for(tid = 0; tid < num_threads; tid++){
+	// create a worker thread ;
+	pthread_create((thr+tid), &attr, testing_t, (void *)((long)tid));
+	//pthread_detach(thr);
+    }
+
+    pthread_attr_destroy(&attr);
+    for(tid = 0; tid < num_threads; tid++){
+        // wait for the termination of a copier_t thread
+        pthread_join(*(thr+tid), &status);
+    }
+    free(thr);
+
+    base_page_id = 0x03; 
+
+    for(i = 0; i < 10; i++){
+    	addr = (base_page_id  + i) << TARGET_PAGE_BITS; 
+        p = get_page_from_mem(addr); 
+	if (p) printf(" key=0x%" PRIx64 " > p[0] = %d p[100] = %d p[500] = %d\n", addr, p[0], p[100], p[500]);
+	free(p);
+    }
+
+    mem_service_finish();
+}
+
+#define NEW_BASE_PRIORITY 5
+
+void *testing_t (void *t){
+
+    int i, x, ret;
+    uint8_t *p;
+    uint64_t base_page_id, addr; 
+    long pri = (long)t + NEW_BASE_PRIORITY;
+
+    p = malloc(sizeof(uint8_t) * DATA_LENGTH);
+    base_page_id = 0x03; 
+
+    for(i = 0; i < 10; i++){
+	x = (NEW_BASE_PRIORITY+(int)((long)t))*10 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with x value
+    	addr = (base_page_id  + i) << TARGET_PAGE_BITS; 
+
+        ret = put_page_to_mem_priority(addr, p, pri); 
+	printf(" t=%d put 0x%" PRIx64 " x = %d ret = %d\n", (int)pri, addr, x, ret);
+	fflush(stdout);
+    }
+    free(p);
+
+    pthread_exit((void *)t);
+
+}
+

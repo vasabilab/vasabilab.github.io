@@ -1,0 +1,30 @@
+/*  This program is a part of vasabilab's educational notes.
+    Author: kasidit chanchio   
+            Department of Computer Science,
+            Thammasat University, THAILAND 
+            kasiditchanchio@gmail.com
+*/
+
+typedef uint64_t ram_addr_t;
+
+#define		TLC_NUM_MEMLOCK_PER_1GB		2048
+#define 	ONEGIGABYTES			(1024 * 1024 * 1024)
+#define 	ONEMEGABYTES			(1024 * 1024)
+
+#define 	TARGET_PAGE_BITS 12
+#define 	TARGET_PAGE_SIZE (1 << TARGET_PAGE_BITS)
+#define 	TARGET_PAGE_MASK ~(TARGET_PAGE_SIZE - 1)
+
+#define 	BASE_PRIORITY	0
+
+extern uint64_t global_mem_size;
+extern uint64_t priority_mem_size;
+
+extern int mem_service_init(uint64_t);
+extern int set_data_to_mem_priority(ram_addr_t addr, uint8_t *ptr, uint64_t data_size, int pri);
+extern uint8_t *get_data_from_mem(ram_addr_t addr, uint64_t data_size);
+extern void mem_service_finish(void);
+// Interfaces for operations on VM memory pages
+extern int put_page_to_mem_priority(ram_addr_t addr, uint8_t *ptr, int pri);
+extern uint8_t *get_page_from_mem(ram_addr_t addr);
+

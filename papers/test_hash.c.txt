@@ -1,0 +1,96 @@
+/*  This program is a part of vasabilab's educational notes.
+    Author: kasidit chanchio   
+            Department of Computer Science,
+            Thammasat University, THAILAND 
+            kasiditchanchio@gmail.com
+*/
+
+#include	<stdio.h>
+#include	<stdlib.h>
+#include	<stdint.h>
+#include	<string.h>
+#include	"uthash.h"
+
+#include 	"hash_server.h"
+
+#define 	DATA_LENGTH	4096
+#define		HASH_TABLE_SIZE	4096*1024
+
+main(int argc, char *argv[]){
+    int i, x, ret;
+    uint8_t *p;
+
+    hash_service_init(HASH_TABLE_SIZE);
+
+    // Test setting/getting without priority
+    printf("--Test setting/getting without priority--\n");
+
+    p = malloc(sizeof(uint8_t) * DATA_LENGTH);
+
+    for(i = 0; i < 10; i++){
+        memset(p, i, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+        ret = put_page_to_hash(1000+i, p); 
+	printf(" first put %d ret = %d\n", 1000+i, ret);
+
+        memset(p, i, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+        ret = put_page_to_hash(1000+i, p); 
+	printf(" second put %d ret = %d\n", 1000+i, ret);
+    }
+    free(p);
+
+    for(i = 0; i < 10; i++){
+        p = get_page_from_hash(1000+i); 
+	printf(" key=%d > p[0] = %d p[100] = %d p[500] = %d\n", 1000+i, p[0], p[100], p[500]);
+	free(p);
+    }
+
+    // Test prioritized setting/getting (new values do not replace old one)
+    printf("--Test prioritized setting/getting (new values do not replace old one)--\n");
+
+    p = malloc(sizeof(uint8_t) * DATA_LENGTH);
+
+    for(i = 0; i < 10; i++){
+	x = 10 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+        ret = put_page_to_hash_priority(2000+i, p, 2); // priority is 2
+	printf(" first put %d ret = %d\n", 2000+i, ret);
+
+	x = 20 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+        ret = put_page_to_hash_priority(2000+i, p, 1);  // priority is 1
+	printf(" second put %d ret = %d\n", 2000+i, ret);
+    }
+    free(p);
+
+    for(i = 0; i < 10; i++){
+        p = get_page_from_hash_priority(2000+i, 2); 
+	if (p) printf(" key=%d > p[0] = %d p[100] = %d p[500] = %d\n", 2000+i, p[0], p[100], p[500]);
+	free(p);
+    }
+
+    // Test prioritized setting/getting (not overwrite)
+    printf("--Test prioritized setting/getting (overwrite old value)--\n");
+
+    p = malloc(sizeof(uint8_t) * DATA_LENGTH);
+
+    for(i = 0; i < 10; i++){
+	x = 30 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+        ret = put_page_to_hash_priority(3000+i, p, 1); 
+	printf(" first put %d ret = %d\n", 3000+i, ret);
+
+	x = 40 + i;
+        memset(p, x, sizeof(uint8_t) * DATA_LENGTH); // fill p with i's value
+        ret = put_page_to_hash_priority(3000+i, p, 2); 
+	printf(" second put %d ret = %d\n", 3000+i, ret);
+    }
+    free(p);
+
+    for(i = 0; i < 10; i++){
+        p = get_page_from_hash_priority(3000+i, 2); 
+	if(p) printf(" key=%d > p[0] = %d p[100] = %d p[500] = %d\n", 3000+i, p[0], p[100], p[500]);
+	free(p);
+    }
+
+    hash_service_finish();
+}
