@@ -16,12 +16,10 @@
     	<div class="headerBackground"><h1></h1></div>
         <div id="navcontainer">
             <ul id="navlist">
-                <li><a href="index.html">HOME</a></li>
+                <li id="active"><a href="#" id="current">HOME</a></li>
                 <li><a href="about.html">ABOUT</a></li>
-                <li id="active"><a href="#" id="current">PROJECTS</a></li>
-                <li><a href="publications.html">PUBLICATIONS</a></li>
-                <li><a href="people.html">PEOPLE</a></li>
-                <li><a href="events.html">EVENTS</a></li>
+                <li><a href="software.html">SOFTWARE</a></li>
+                <li><a href="publications.html">POST</a></li>
                 <li><a href="contact.html">CONTACT</a></li>
             </ul>
         </div>
@@ -39,106 +37,26 @@
     <!-- end #sidebar1 -->
     <!-- begin #mainContent -->
     <div id="mainContent">
-<!--  <h1>Software</h1>  -->
-    <h1>Ph.D. Project: A Performance Prediction Model for Heterogeneous Processors</h1>
-<p>
-Performance prediction model is essential for running applications on heterogeneous processors. In previous studies, there are no generalized performance prediction model for heterogeneous systems. Most of them evaluate the performance of GPU based on CUDA source code and runtime environment. This study will extend the previous studies by creating a generalized the prediction model based on OpenCL source code and developing a methodology to facilitate the prediction. This model is an analytical model using hardware profiles and software algorithms as input parameters.
-<br><b>Ph.D. Student:</b> Pichet Wongvibulsin
-<br><b>Advisor:</b> Dr. Kasidit Chanchio 
-</p>
-<br />
+  <h1>Software</h1>  
 
-    <h1>Science Cloud, Thammasat University</h1>
-    <img src="images/logo/scicloud1.png" alt="science cloud" width="195" />
-<p>
-The Science Cloud project aims to create a Cloud Computing infrastructure to support computational research at Thammasat University. The project is built using the opensource OpenStack Cloud management software. The system is currently being used for scienctific computation, software developments and class room instructions.
-</p>
 <ul>
-<li>See the <a href="http://sciencecloud-community.cs.tu.ac.th">Science Cloud Community</a> web page for Science Cloud-related information.
+<li><a href="kolla_helper4.html"> Kolla-ansible helper for 4-nodes OpenStack (Caracal) installation.</a> 
+This javascript web page allow users to enter information about the hosts that
+they want to install OpenStack and
+generate a tutorial based on the information. 
+<li><a href="">Script-based Openstack Installer for OpenStack victoria</a>
 </ul>
-<p>Another objective of the Science Cloud project is to create tools to ease OpenStack deployment and optimize its performance. Recently, we have created a set of shell scripts to assist OpenStack Icehouse installation. They are available for download below.  
-<p><b>DOWNLOADS:</b>
-<ul>
-<li>OpenStack (Icehouse) Installation Script: You can get it from:
-    <ul><li> <a href="https://github.com/kasidit/OpenStackInstaller">OpenStackInstaller github page</a> or </li>
-         <li>directly at <a href="projects/OpenStackInstaller.tar">OpenStackInstaller.tar</a></li>
-    </ul>
- </li>
-<li>You may use our installation parameter generator web page in the helper sub-directory of the above tar file to help define installation parameter values.</li>
-<li><a href="projects/OpenStackIcehouseInstall.pdf">Installation Instructions</a></li>
-<li>Installation <a href="http://www.youtube.com/playlist?list=PLmUxMbTCUhr74-y13Q4c8_yuDzeyV9W4g" target="_blank" >youtube video playlist</a></li>
-</ul>
-</p>
-<br />
 
-    <h1>Virtual Machine Migration and Checkpointing System</h1>
-    <img src="images/logo/vmich.jpg" alt="vmich" />
-    <p>
-The Virtual machine Migration and Checkpointing (VMiCh) System is a software system that provides resilience and fault tolerance for virtual machines using Thread-based Live Migration (TLM) and Thread-based Live Checkpointing (TLC) mechanisms. In the Figure below, VMiCh’s architecture consists of three basic components: 
-<ul><li>TLC/TLM extension to KVM: captures VM state and uses TLM or TLC mechanisms to migrate VM state live to a destination VM or checkpoint VM state to backup storages, respectively (See 3 in the Figure).</li>
-    <p><b>DOWNLOADS:</b>
-    <a href="projects/TLM.html">TLM/TLC Software and Documentation.</a>
-    </p>
-<li>Vasabi Manager Agent: receives instructions from users and administers the migration or checkpointing operations (See 1 & 2).</li>
-<li>Vasabi Reporter Agent: collects runtime status of the migration and checkpointing operations and reports their progress live to the web (See 4).</li>
-</ul>
-</p>
-
-<p>
-<div id="picture"><img src="images/projects/vmich-architecture.png" width=550 height=419 alt="VMiCh Architecture" /><br />
-VMiCh Architecture
-</div>
-<br />
-</p>
-
-    <p>Our preliminary research results can be found in <a href="papers/nca11.pdf" target="_blank">the TLC paper</a> presented at the IEEE NCA 2011 conference. </p>
-<br />    
-    <h1>The Virtual Cluster-based Coordinated checkpointing Protocol (VCCP)</h1>
-    <img src="images/logo/vccp2.png" alt="vccp" />
-<p>We have reported our proof of concepts VCCP implementation and
-experiments in <a href="papers/saragol09vccp-w2003.pdf" target="_blank">our VCCP paper</a> presented at IEEE Cluster 2009. We are
-planning to investigate the following new research topics:
-The integration of TLC mechanism and VCCP protocol
-The design and development of a novel virtual network that can
-seamlessly inter-operate with the VCCP protocol and provide scalable data transmission performance among virtual machines.
-</p><br />
-           
-<p><b>Previous Projects:</b>
-</p>
-    <h1>SushiCloud OpenStack Testbed</h1>
-    <img src="images/logo/sushicloud.jpg" alt="sushicloud" />
-<p>This project has the following objectives:
-<ul><li>Create a Cloud Computing Platform to support research at Thammasat University and partner organizations.</li>
-<li>Accumulate practical knowledge and experiences on Cloud deployment and operations.</li>
-<li>Study OpenStack Cloud OS in order to integrate our advanced Fault Resilient and Cloud management mechanisms to it.</li>
-</ul>
- </p>
-<p>
-              This is our <a href="http://blog.sushicloud.cs.tu.ac.th/" target="_blank" >blog</a> built and run on SushiCloud.<br />
-</p>
-<p><b>DOWNLOADS:</b>
-<ul><li>OpenStack (Folsom) Installation Script: <a href="projects/vasabi-openstack-install-0.1.1.tar">vasabi-openstack-install-0.1.0.tar</a></li>
-<li>Installation Documentation blog and PDF (in Thai)</li>
-<li>Installation <a href="http://www.youtube.com/user/puusuan/videos?flow=grid&view=0" target="_blank" >Youtube videos</a> (in Thai)</li>
-</ul>
-</p>
-<br />
-<h1>The Checkpointing-Enabled Virtual Machine (CEVM)</h1>    <img src="images/logo/cevm2.png" alt="cevm" />
-<p><i>The Checkpointing-Enabled Virtual Machine (CEVM) project</i> is a project to create an efficient, hypervisor-based checkpointing mechanism exploiting available resources in multiprocessing environments. We have concluded this project and presented our results in this <a href="thesis/verapong.zip">thesis</a> and the "An Efficient Virtual Machine Checkpointing Mechanism for Hypervisor-based HPC systems" paper. </p><br />           
-              
   </div>
   <!-- end #mainContent -->
   <br class="clearfloat" />
     <!-- begin #footer -->
     <div id="footer">
-    	<a href="http://www.cs.tu.ac.th" class="rss" alink><img src="images/logo/cstulogo.jpg" alt="Department of Computer Science, Thammasat University" /></a>
         <p>
         <a href="index.html" class="footerLink">Home</a> |
         <a href="about.html" class="footerLink">About</a> |
-        <a href="projects.html" class="footerLink">Projects</a> |
-        <a href="publications.html" class="footerLink">Publications</a> | 
-        <a href="people.html" class="footerLink">People</a> | 
-        <a href="events.html" class="footerLink">Events</a> |
+        <a href="software.html" class="footerLink">Software</a> |
+        <a href="publications.html" class="footerLink">Post</a> |
         <a href="contact.html" class="footerLink">Contact</a><br/>
         </p>
     </div>
