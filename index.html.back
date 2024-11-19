@@ -56,6 +56,27 @@
             <div id="mainContent2">
             <h1>Past projects in our laboratory are: </h1>
 
+            
+            <div id="titleContent"> 
+                <img src="images/logo/sushicloud.jpg" alt="" width="167" height="119" /><br />
+                
+            </div>
+
+            <div id="titleContent2">
+            <b>SushiCloud Openstack Project</b><br /><br /><i>The SushiCloud Openstack project</i> intends to build a public Cloud platform based on the open source Openstack software to facilitate advanced studies and analysis of 
+Cloud computing. The project will also serve as an experimental platform for the integration of fault-tolerance software components and the open source public Cloud system.
+            </div>
+            
+             <div id="titleContent"> 
+                <img src="images/logo/vmich.jpg" alt="" /><br />
+                
+            </div>
+            
+            <div id="titleContent2">
+            <b>VMiCh: Virtual machine Migration and Checkpointing system</b><br /><br /><i>The VMiCh system</i> is a modified Kernel Virtual Machine (KVM) software that incorporates our Thread -based Live Migration (TLM) and Thread-based Live Checkpointing (TLC) capabilities. The highlights of the TLM and TLC capabilities are the abilities to perform live migration and checkpointing efficiently especially for Virtual Machines with multiple vcpus and large memory size.
+            </div>
+            
+           
             <div id="titleContent"> 
                 <img src="images/logo/vccp2.png" alt="" />
                 
