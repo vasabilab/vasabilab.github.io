@@ -1,0 +1,5 @@
+            <h2>Outdated Software</h2>
+              <ul>
+              <li>The Thread-based Live Migration and Checkpointing software (based on qemu-kvm 1.0.0) available at <a href="https://github.com/kasidit/tlc-qemu-kvm-1.0.0">this github page.</a>, September 2014.</li><br />
+              <li>The OpenStack Icehouse Installer software available at <a href="https://github.com/kasidit/OpenStackInstaller">this github page.</a>, August 2014.</li><br />
+              </ul>
