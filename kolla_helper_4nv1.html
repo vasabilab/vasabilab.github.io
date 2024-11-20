@@ -79,6 +79,7 @@
   <input type="text" id="com02TunIp" placeholder="Com02 Tun IP" style="top: 318px; left: 1000px; width: 145px;">
 
   <input type="text" id="extSubnetCidr" placeholder="External Net Subnet" style="top: 460px; left: 797px; width: 200px;">
+  <input type="text" id="con01ExtNic" placeholder="Con01 Ext NIC" style="top: 382px; left: 130px; width: 120px;">
   <input type="text" id="extNic" placeholder="Net01 Ext NIC" style="top: 416px; left: 420px; width: 120px;">
   <input type="text" id="extGatewayIp" placeholder="ExtGateway IP" style="top: 512px; left: 300px; width: 145px;">
   <input type="text" id="extStartIp" placeholder="Ext Start IP" style="top: 512px; left: 535px; width: 145px;">
@@ -163,6 +164,9 @@
 
 <li><div id="tutor17Output" class="m-div"></div>
 <pre id="script17Output"></pre></li>
+
+<li><div id="tutor18Output" class="m-div"></div>
+<pre id="script18Output"></pre></li>
 </ol>
 
 <div id="finalOutput" class="m-div"></div>
@@ -203,6 +207,8 @@
         var extStartIp = document.getElementById('extStartIp').value;
         var extEndIp = document.getElementById('extEndIp').value;
 
+        var con01ExtNic = document.getElementById('con01ExtNic').value;
+
         const resultDiv = document.getElementById('result');
         const verResultDiv = document.getElementById('verResult');
 
@@ -212,7 +218,6 @@
         var alltrue = true;
 
         while(alltrue){ 
-
 
           if (isValidCIDR(manSubnetCidr)){
             outputText = outputText + "\n    " + manSubnetCidr + " is a valid CIDR subnet address.";
@@ -377,6 +382,10 @@
             outputText = outputText + "\n    " + " External Net Nics are valid.";
           }
 
+          if (con01ExtNic == ""){
+            con01ExtNic = "X";
+          }
+
           const [ eipNum1, eflag1 ] = checkIpInSubnet(extGatewayIp,extSubnetCidr);
           if(eflag1 == 1){
             outputText = outputText + "\n    " + extGatewayIp + " is a valid IP address.";
@@ -425,8 +434,7 @@
             outputText = outputText + "\n    " + " Start and End  IPs are valid.";
           }
 
-
-/*
+/* // test info
         manSubnetCidr =     "172.16.0.0/16";
         con01ManNic =       "ens3";
         con01ManIp =        "172.16.38.11";
@@ -458,7 +466,11 @@
         extGatewayIp =  "10.90.38.1";
         extStartIp =    "10.90.38.50";
         extEndIp =      "10.90.38.200";
+
+        con01ExtNic = "ens4";
 */
+
+          
           break;
         }
 
@@ -746,7 +758,7 @@
 
           document.getElementById('tutor13p2Output').innerHTML = tutor13p2Content;
 
-          var script13p2Content = ` $ \n`;
+          var script13p2Content = `$  # --> after login or run a new shell\n`;
           script13p2Content = script13p2Content + `$ groups ${kollaUser}\n`;
           script13p2Content = script13p2Content + `# --> you will see ${kollaUser} being added in the docker group.\n`;
           script13p2Content = script13p2Content + `$ source $HOME/kolla-ops/bin/activate\n`;
@@ -817,17 +829,30 @@
 
           document.getElementById('script16Output').textContent = script16Content;
 
-          var tutor17Content = `ถ้าผู้อ่านต้องการแก้ไขเพิ่มเตอมการติดตั้งระบบโอเพ่นสแตค เช่น เพิ่มหรือลดบริการของส่วนประกอบ \n`;
-          tutor17Content = tutor17Content + `และความสามารถของระบบ ผู้อ่านต้องเข้าสู่ virtual environment และ\n`;
-          tutor17Content = tutor17Content + `เปลี่ยนแปลงค่าในไฟล์ /etc/kolla/globals.yml \n`;
-          tutor17Content = tutor17Content + `และ ใช้คำสั่ง reconfigure ของ kolla-ansible\n`;
+          var tutor17Content = `<u>ถ้าผู้อ่านต้องการเข้าถึง External Network จากเครื่อง ${controller01}</u>\n`;
+          tutor17Content = tutor17Content + `ผู้อ่านต้องเซ็ตค่า IP address ในสับเน็ต ${extSubnetCidr} ที่ยังไม่ถูกใช้งาน\n`;
+          tutor17Content = tutor17Content + `(สมมุติว่าเท่ากับ a.b.c.d/e) ให้กับ ${con01ExtNic}\n`;
+          tutor17Content = tutor17Content + `เพื่อให้เครื่อง ${controller01} สามารถเข้าถึง floating IP ได้\n`;
 
           document.getElementById('tutor17Output').innerHTML = tutor17Content;
 
-          var script17Content = `$\n(kolla-ops)...:~$ source $HOME/kolla-ops/bin/activate\n`;
-          script17Content = script17Content + `(kolla-ops)...:~$ kolla-ansible -i multinode reconfigure\n`;
+          var script17Content = `On ${controller01} host: \n`;
+          script17Content = script17Content + `$ sudo ip address add a.b.c.d/e dev ${con01ExtNic}\n`;
+          script17Content = script17Content + `$ sudo ip link set ${con01ExtNic} up\n`;
 
-          document.getElementById('script16Output').textContent = script16Content;
+          document.getElementById('script17Output').textContent = script17Content;
+
+          var tutor18Content = `<u>ในกรณีที่ผู้อ่านต้องการแก้ไขเพิ่มเติมการติดตั้งระบบโอเพ่นสแตค</u> เช่น เพิ่มหรือลดบริการของส่วนประกอบ \n`;
+          tutor18Content = tutor18Content + `และความสามารถของระบบ ผู้อ่านต้องเข้าสู่ virtual environment และ\n`;
+          tutor18Content = tutor18Content + `เปลี่ยนแปลงค่าในไฟล์ /etc/kolla/globals.yml \n`;
+          tutor18Content = tutor18Content + `และ ใช้คำสั่ง reconfigure ของ kolla-ansible\n`;
+
+          document.getElementById('tutor18Output').innerHTML = tutor18Content;
+
+          var script18Content = `$(kolla-ops)...:~$ source $HOME/kolla-ops/bin/activate\n`;
+          script18Content = script18Content + `(kolla-ops)...:~$ kolla-ansible -i multinode reconfigure\n`;
+
+          document.getElementById('script18Output').textContent = script18Content;
 
           var finalContent = `<b>References</b>:<p>ผู้อ่านควรศึกษาข้อมูลเพิ่มเติมจากแหล่งข้อมูลต่อไปนี้\n`;
           finalContent = finalContent + `เพื่อเพิ่มความเข้าใจเกี่ยวกับ kolla-ansible และระบบโอเพ่นสแตค\n`;
@@ -847,10 +872,6 @@
           verResultDiv.textContent = "Fail";
 
           tutorial.classList.add('hidden');
-/*
-          const scriptContent = `--No Outputs-- `;
-          document.getElementById('scriptOutput').textContent = scriptContent;
-*/
         }
     }
 
@@ -906,6 +927,17 @@
         ctx.stroke();
     }
 
+    function dlinedash(x1,y1,x2,y2,color){
+        const ctx = canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.moveTo(x1, y1); // Starting point at (100, 50)
+        ctx.lineTo(x2, y2); // Ending point at (990, 50)
+        ctx.setLineDash([2, 4]); 
+        ctx.lineWidth = 5; // Width of the line
+        ctx.strokeStyle = color; // Color of the line
+        ctx.stroke();
+    }
+
     function dbox(x1,y1,width,height, color){
         const ctx = canvas.getContext("2d");
         ctx.fillStyle = color; // Fill color for the box
@@ -935,7 +967,7 @@
     
     const canvas = document.getElementById("myCanvas");
 
-    dbox(40,80,250,220,"Beige"); 
+    dbox(40,80,250,270,"Beige"); 
     dbox(330,80,250,340,"Beige"); 
     dbox(620,80,250,220,"Beige"); 
     dbox(910,80,250,220,"Beige"); 
@@ -961,10 +993,10 @@
 
     // External Net
     dline(100,431,1100,431,"DimGrey");
-
     dline(440,400,440,430,"DimGray");
-
     dlabel20px(610,410,"External Net CIDR:","Black");
+
+    dlinedash(150,350,150,430,"DarkOrange");
 
     // controller01
     dlabel16px(70,75,"local", "Blue");
@@ -975,6 +1007,9 @@
     dlabel16px(70,193," Host:","Black");
     dlabel16px(70,223," User:","Black");
     dlabel16px(60,253," Vip IP:","Black");
+
+    dlabel16px(70,307,"Optional","Black");
+    dlabel16px(70,330,"Nic02:","Black");
 
     // network01 
     dlabel16px(460,75,"network", "DarkBlue");
