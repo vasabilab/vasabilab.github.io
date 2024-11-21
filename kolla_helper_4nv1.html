@@ -80,7 +80,7 @@
 
   <input type="text" id="extSubnetCidr" placeholder="External Net Subnet" style="top: 460px; left: 797px; width: 200px;">
   <input type="text" id="con01ExtNic" placeholder="Con01 Ext NIC" style="top: 382px; left: 130px; width: 120px;">
-  <input type="text" id="extNic" placeholder="Net01 Ext NIC" style="top: 416px; left: 420px; width: 120px;">
+  <input type="text" id="net01ExtNic" placeholder="Net01 Ext NIC" style="top: 416px; left: 420px; width: 120px;">
   <input type="text" id="extGatewayIp" placeholder="ExtGateway IP" style="top: 512px; left: 300px; width: 145px;">
   <input type="text" id="extStartIp" placeholder="Ext Start IP" style="top: 512px; left: 535px; width: 145px;">
   <input type="text" id="extEndIp" placeholder="Ext End IP" style="top: 512px; left: 770px; width: 145px;">
@@ -202,7 +202,7 @@
         var com02TunIp = document.getElementById('com02TunIp').value;
 
         var extSubnetCidr = document.getElementById('extSubnetCidr').value;
-        var extNic = document.getElementById('extNic').value;
+        var net01ExtNic = document.getElementById('net01ExtNic').value;
         var extGatewayIp = document.getElementById('extGatewayIp').value;
         var extStartIp = document.getElementById('extStartIp').value;
         var extEndIp = document.getElementById('extEndIp').value;
@@ -219,6 +219,7 @@
 
         while(alltrue){ 
 
+/*
           if (isValidCIDR(manSubnetCidr)){
             outputText = outputText + "\n    " + manSubnetCidr + " is a valid CIDR subnet address.";
           }
@@ -355,7 +356,7 @@
           }
 
 
-          if (extNic == "") {
+          if (net01ExtNic == "") {
             outputText = outputText + "\n    " + " External Net Nics must not be an empty string.";
             alltrue = false; 
             break; 
@@ -373,7 +374,7 @@
             break; 
           }
 
-          if (extNic == ""){
+          if (net01ExtNic == ""){
             outputText = outputText + "\n    " + " External Net Nics must not be an empty string.";
             alltrue = false; 
             break; 
@@ -433,8 +434,9 @@
           else{
             outputText = outputText + "\n    " + " Start and End  IPs are valid.";
           }
+*/
+ // test info
 
-/* // test info
         manSubnetCidr =     "172.16.0.0/16";
         con01ManNic =       "ens3";
         con01ManIp =        "172.16.38.11";
@@ -462,14 +464,12 @@
         com02TunIp =    "10.77.0.32";
 
         extSubnetCidr = "10.90.38.0/24";
-        extNic =        "ens5";
+        net01ExtNic =        "ens5";
         extGatewayIp =  "10.90.38.1";
         extStartIp =    "10.90.38.50";
         extEndIp =      "10.90.38.200";
 
         con01ExtNic = "ens4";
-*/
-
           
           break;
         }
@@ -492,9 +492,7 @@
           tutor1Content = tutor1Content + `เนื่องจากโอเพ่นสแตคจำเป็นต้องใช้เคอร์เนิลโดูลหลายอย่างซึ่งบางโมดูลเช่น ip_vs จะไม่มีใน linux-kvm  \n\n`;
           tutor1Content = tutor1Content + `<li>ในกรณีที่ผู้อ่านติดตั้งเครื่องโฮสต์โดยใช้คลาวด์อินนิตอิมเมจ (cloud-init image) ของ Ubuntu 22.04 \n`;
           tutor1Content = tutor1Content + `ผู้อ่านจำเป็นต้องโหลดเคอร์เนิลโมดูล ip_vs เข้าสู่เคอร์เนิลด้วยคำสั่ง modprobe \n`;
-          tutor1Content = tutor1Content + `<li>ในกรณีที่ผู้อ่านใช้ระบบคลาวด์อินนิตเพื่อกำหนดค่า network configuration บนเครื่องโฮสต์\n`;
-          tutor1Content = tutor1Content + `(กำหนดค่าไอพีแอดเดรสของเครื่องโฮสต์ในไฟล์ /etc/netplan/50-cloud-init.yml) \n`;
-          tutor1Content = tutor1Content + `ผู้อ่านต้อง disable cloud-init สำหรับการบูทเครื่องในอนาคต</ul>\n`;
+          tutor1Content = tutor1Content + `</ul>\n`;
           tutor1Content = tutor1Content + `สุดท้าย บนเครื่อง ${controller01} ผู้อ่านต้องใส่ชื่อโฮสต์ทุกเครื่องในไฟล์ /etc/hosts \n`;
 
           document.getElementById('tutor1Output').innerHTML = tutor1Content;
@@ -504,7 +502,6 @@
           script1Content = script1Content + `Linux ...-generic... <-- generic is recommended \n`;
           script1Content = script1Content + `$ sudo modprobe ip_vs\n`;
           script1Content = script1Content + `$ lsmod | grep  ip_vs\n`;
-          script1Content = script1Content + `$ sudo sh -c 'echo "network: {config: disabled}" > /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg'\n`;
           script1Content = script1Content + `$ sudo apt update; sudo apt dist-upgrade\n`;
           script1Content = script1Content + `$ test -f /var/run/reboot-required && sudo reboot\n`;
           script1Content = script1Content + `\n`;
@@ -526,11 +523,25 @@
           document.getElementById('script2Output').textContent = script2Content;
 
           var tutor3Content = `สร้างคู่ private/public keys และกระจาย public key บนทุกเครื่องโฮสต์\n`;
+          tutor3Content = tutor3Content + `หลังจากนั้น ผู้อ่านสามารถใช้ ping ทดสอบการเชื่อมต่อระหว่างเครื่องโฮสต์ \n`;
+          tutor3Content = tutor3Content + `ผ่าน data tunnel network และการเชื่อมต่อจากเครื่อง ${network01} \n`;
+          tutor3Content = tutor3Content + `ไปยัง external network\n`;
+          tutor3Content = tutor3Content + `(สมมุติว่า a.b.c.d/e คือค่า IP address ใน subnet ${extSubnetCidr}\n`;
+          tutor3Content = tutor3Content + `ที่ว่างอยู่ ยังไม่ถูกใช้งาน มันจะถูกใช้ในการทดสอบนี้ชั่วคราวแล้วถูกลบออกไป)\n`;
 
           document.getElementById('tutor3Output').innerHTML = tutor3Content;
 
           var script3Content = `$ ssh-keygen\n...\npress enter on every prompt\n...\n`;
           script3Content = script3Content + `$ for x in ${network01} ${compute01} ${compute02}; do ssh-copy-id ${kollaUser}@\$x; done\n`;
+          script3Content = script3Content + `$ \n`;
+          script3Content = script3Content + `$ for x in ${network01} ${compute01} ${compute02}; \\\n     ssh ${kollaUser}@\$x \'ping -c 2 ${net01TunIp}; ping -c 2 ${com01TunIp}; ping -c 2 ${com02TunIp} \'; done\n`;
+          script3Content = script3Content + `$ \n`;
+          script3Content = script3Content + `$ ssh ${network01} sudo ip address add a.b.c.d/e dev ${net01ExtNic} \n`;
+          script3Content = script3Content + `$ ssh ${network01} sudo ip link set ${net01ExtNic}  up \n`;
+          script3Content = script3Content + `$ \n`;
+          script3Content = script3Content + `$ ssh ${network01} ping -c 2 ${extGatewayIp}\n`;
+          script3Content = script3Content + `$ ssh ${network01} sudo ip address del a.b.c.d/e dev ${net01ExtNic} \n`;
+
           document.getElementById('script3Output').textContent = script3Content;
 
           var tutor4Content = `สร้าง virtual environment และออกคำสั่งภายใน virtual environment\n`;
@@ -650,7 +661,7 @@
           script8Content = script8Content + `${controller01} ansible_connection=local network_interface=${con01ManNic}\n`;
           script8Content = script8Content + `\n`;
           script8Content = script8Content + `[network]\n`;
-          script8Content = script8Content + `${network01} network_interface=${net01ManNic} tunnel_interface=${net01TunNic} neutron_external_interface=${extNic}\n`;
+          script8Content = script8Content + `${network01} network_interface=${net01ManNic} tunnel_interface=${net01TunNic} neutron_external_interface=${net01ExtNic}\n`;
           script8Content = script8Content + `\n`;
           script8Content = script8Content + `[compute]\n`;
           script8Content = script8Content + `${compute01} network_interface=${com01ManNic} tunnel_interface=${com01TunNic} \n`;
