@@ -587,10 +587,12 @@
           var script5Content = `(kolla-ops)...:~$ pip install \'ansible>=8,<9\'\n`;
           script5Content = script5Content + `(kolla-ops)...:~$ nano $HOME/ansible.cfg \n`;
           script5Content = script5Content + `(kolla-ops)...:~$ cat $HOME/ansible.cfg \n`;
+          script5Content = script5Content + ` \n`;
           script5Content = script5Content + `[defaults]\n`;
           script5Content = script5Content + `host_key_checking=False\n`;
           script5Content = script5Content + `pipelining=True\n`;
           script5Content = script5Content + `forks=100\n`;
+          script5Content = script5Content + ` \n`;
           script5Content = script5Content + `(kolla-ops)...:~$\n`;
 
           document.getElementById('script5Output').textContent = script5Content;
@@ -767,7 +769,9 @@
           script13p1Content = script13p1Content + `... outputs ...\n`;
           script13p1Content = script13p1Content + `(kolla-ops)...:~$ sudo usermod -aG docker ${kollaUser}\n`;
           script13p1Content = script13p1Content + `(kolla-ops)...:~$ groups ${kollaUser}\n`;
-          script13p1Content = script13p1Content + `# --> you will see that user ${kollaUser} is not in the docker group \n`;
+          script13p1Content = script13p1Content + `# --> you will see that user ${kollaUser} is in the docker group \n`;
+          script13p1Content = script13p1Content + `(kolla-ops)...:~$ docker ps\n`;
+          script13p1Content = script13p1Content + `# --> but this command still does not work since the shell is the old shell \n`;
           script13p1Content = script13p1Content + `(kolla-ops)...:~$ exit\n`;
 
           document.getElementById('script13p1Output').textContent = script13p1Content;
