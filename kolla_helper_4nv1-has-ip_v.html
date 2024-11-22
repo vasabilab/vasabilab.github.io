@@ -486,11 +486,14 @@
           tutorial.classList.remove('hidden');
 
           var tutor1Content = `ตรวจสอบความพร้อมของเครื่องโฮสต์ที่จะติดตั้งระบบโอเพ่นสแตค  \n`;
-          tutor1Content = tutor1Content + `ผู้อ่านควร\n`;
-          tutor1Content = tutor1Content + `ตรวจสอบว่าระบบลินุกซ์ที่ใช้คือ Ubuntu 22.04 ซึ่งมีเคอร์เนิลแบบ Linux Generic \n`;
+          tutor1Content = tutor1Content + `ผู้อ่านควรเตรียมเครื่องโฮสต์ทุกเครื่องให้พร้อมก่อนการติดตั้งดังนี้ \n`;
+          tutor1Content = tutor1Content + `<ul><li>ใช้คำสั่งแรกตรวจสอบว่าระบบลินุกซ์ที่ใช้คือ Ubuntu 22.04 ซึ่งมีเคอร์เนิลแบบ Linux Generic \n`;
           tutor1Content = tutor1Content + `แทนที่จะเป็นแบบ linux-kvm \n`;
           tutor1Content = tutor1Content + `(เคอร์เนิลแบบ Linux-kvm เป็นแบบที่ได้รับการปรับแต่งให้รันวีเอ็มได้เร็วจึงมีการตัดบางโมดูลออก) \n`;
-          tutor1Content = tutor1Content + `ซึ่งบางโมดูลที่โอเพ่นสแตคใช้เช่น ip_vs ไม่มีอยู่ใน linux-kvm  \n\n`;
+          tutor1Content = tutor1Content + `เนื่องจากโอเพ่นสแตคจำเป็นต้องใช้เคอร์เนิลโดูลหลายอย่างซึ่งบางโมดูลเช่น ip_vs จะไม่มีใน linux-kvm  \n\n`;
+          tutor1Content = tutor1Content + `<li>ในกรณีที่ผู้อ่านติดตั้งเครื่องโฮสต์โดยใช้คลาวด์อินนิตอิมเมจ (cloud-init image) ของ Ubuntu 22.04 \n`;
+          tutor1Content = tutor1Content + `ผู้อ่านจำเป็นต้องโหลดเคอร์เนิลโมดูล ip_vs เข้าสู่เคอร์เนิลด้วยคำสั่ง modprobe \n`;
+          tutor1Content = tutor1Content + `</ul>\n`;
           tutor1Content = tutor1Content + `สุดท้าย บนเครื่อง ${controller01} ผู้อ่านต้องใส่ชื่อโฮสต์ทุกเครื่องในไฟล์ /etc/hosts \n`;
 
           document.getElementById('tutor1Output').innerHTML = tutor1Content;
