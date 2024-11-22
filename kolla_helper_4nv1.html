@@ -219,6 +219,7 @@
 
         while(alltrue){ 
 
+
           if (isValidCIDR(manSubnetCidr)){
             outputText = outputText + "\n    " + manSubnetCidr + " is a valid CIDR subnet address.";
           }
@@ -470,7 +471,7 @@
         extEndIp =      "10.90.38.200";
 
         con01ExtNic = "ens4";
- */         
+*/          
           break;
         }
 
@@ -523,18 +524,35 @@
           document.getElementById('script2Output').textContent = script2Content;
 
           var tutor3Content = `สร้างคู่ private/public keys และกระจาย public key บนทุกเครื่องโฮสต์\n`;
-          tutor3Content = tutor3Content + `หลังจากนั้น ผู้อ่านสามารถใช้ ping ทดสอบการเชื่อมต่อระหว่างเครื่องโฮสต์ \n`;
-          tutor3Content = tutor3Content + `ผ่าน data tunnel network และการเชื่อมต่อจากเครื่อง ${network01} \n`;
+          tutor3Content = tutor3Content + `หลังจากนั้น ผู้อ่านสามารถทำต่อไปนี้ \n`;
+          tutor3Content = tutor3Content + `<ul><li>ล็อกอินทางไกลเข้าสู่เครื่่อง ${network01} ${compute01} และ ${compute02} \n`;
+          tutor3Content = tutor3Content + `ด้วย ssh แล้วอัพเดท Linux ดังที่เคยทำบนเครื่อง  ${controller01}\n`;
+          tutor3Content = tutor3Content + `<li>ใช้ ping ทดสอบการเชื่อมต่อระหว่างเครื่องโฮสต์ \n`;
+          tutor3Content = tutor3Content + `ผ่าน data tunnel network และ \n`;
+          tutor3Content = tutor3Content + `<li>ทดสอบการเชื่อมต่อจากเครื่อง ${network01} \n`;
           tutor3Content = tutor3Content + `ไปยัง external network\n`;
           tutor3Content = tutor3Content + `(สมมุติว่า a.b.c.d/e คือค่า IP address ใน subnet ${extSubnetCidr}\n`;
-          tutor3Content = tutor3Content + `ที่ว่างอยู่ ยังไม่ถูกใช้งาน มันจะถูกใช้ในการทดสอบนี้ชั่วคราวแล้วถูกลบออกไป)\n`;
+          tutor3Content = tutor3Content + `ที่ว่างอยู่ ยังไม่ถูกใช้งาน มันจะถูกใช้ในการทดสอบนี้ชั่วคราวแล้วถูกลบออกไป)</ul>\n`;
 
           document.getElementById('tutor3Output').innerHTML = tutor3Content;
 
           var script3Content = `$ ssh-keygen\n...\npress enter on every prompt\n...\n`;
           script3Content = script3Content + `$ for x in ${network01} ${compute01} ${compute02}; do ssh-copy-id ${kollaUser}@\$x; done\n`;
           script3Content = script3Content + `$ \n`;
-          script3Content = script3Content + `$ for x in ${network01} ${compute01} ${compute02}; \\\n     ssh ${kollaUser}@\$x \'ping -c 2 ${net01TunIp}; ping -c 2 ${com01TunIp}; ping -c 2 ${com02TunIp} \'; done\n`;
+          script3Content = script3Content + `$ for x in ${network01} ${compute01} ${compute02}; do \\\n     ssh ${kollaUser}@\$x \'lsb_release -a; uname -a\'; done\n`;
+          script3Content = script3Content + `$ \n`;
+          script3Content = script3Content + `$ ssh ${network01} \n`;
+          script3Content = script3Content + `...\n`;
+          script3Content = script3Content + `On ${network01} host: \n`;
+          script3Content = script3Content + `${network01}..$ sudo apt update; sudo apt dist-upgrade \n`;
+          script3Content = script3Content + `${network01}..$ test -f /var/run/reboot-required && sudo reboot \n`;
+          script3Content = script3Content + `${network01}..$ exit \n`;
+          script3Content = script3Content + `...\n`;
+          script3Content = script3Content + `# --> do the same for ${compute01} and ${compute02}  \n`;
+          script3Content = script3Content + `...\n`;
+          script3Content = script3Content + `Back on ${controller01} host: \n`;
+          script3Content = script3Content + `$ \n`;
+          script3Content = script3Content + `$ for x in ${network01} ${compute01} ${compute02}; do \\\n     ssh ${kollaUser}@\$x \'ping -c 2 ${net01TunIp}; ping -c 2 ${com01TunIp}; ping -c 2 ${com02TunIp} \'; done\n`;
           script3Content = script3Content + `$ \n`;
           script3Content = script3Content + `$ ssh ${network01} sudo ip address add a.b.c.d/e dev ${net01ExtNic} \n`;
           script3Content = script3Content + `$ ssh ${network01} sudo ip link set ${net01ExtNic}  up \n`;
