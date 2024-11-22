@@ -498,8 +498,6 @@
           var script1Content = `On every host:\n\n`;
           var script1Content = script1Content +  `$ uname -a\n`;
           script1Content = script1Content + `Linux ...-generic... <-- generic is recommended \n`;
-          script1Content = script1Content + `$ sudo modprobe ip_vs\n`;
-          script1Content = script1Content + `$ lsmod | grep  ip_vs\n`;
           script1Content = script1Content + `$ sudo apt update; sudo apt dist-upgrade\n`;
           script1Content = script1Content + `$ test -f /var/run/reboot-required && sudo reboot\n`;
           script1Content = script1Content + `\n`;
