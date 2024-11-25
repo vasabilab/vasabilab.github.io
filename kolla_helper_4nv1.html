@@ -91,9 +91,150 @@
 <footer>
     <p>&copy; 2024 Kasidit Chanchio. All rights reserved.</p>
 </footer>
-
+<p><a href="https://vasabilab.github.io/">vasabilab.github.io</a></p>
+<p>
 <details>
 <summary><b><u>กด</u></b>เพื่อดูข้อความอธิบายการใช้งาน</summary>
+<p>
+เว็บเพจ helper เพื่อแนะแนวการติดตั้งระบบโอเพ่นสแตคด้วยซอฟต์แวร์ <a href="https://docs.openstack.org/kolla-ansible/latest/">kolla-ansible</a>
+โดยมีสมมุติฐานดังนี้ 
+<ol>
+<li>ผู้อ่านใช้เครื่องโฮสต์ 4 เครื่องที่มีระบบเครือข่ายเชื่อมต่อกันดังแผนภาพข้างต้น 
+<li>ผู้อ่านต้องการติดตั้งระบบโอเพ่นสแตคแบบมี
+เครื่อง controller node 1 เครื่อง ใช้เครื่อง network node 1 เครื่องแยกการสื่อสารข้อมูลจากการประมวลผลของส่วนประกอบอื่นของระบบ 
+<li>มีเครื่อง compute node 2 เครื่อง และใช้หนึ่งใน 2 เครื่องนั้นเป็นเครื่อง storage node เพื่อสร้างบล็อคสตอเรจเสมือน
+<li>กำหนดให้วีเอ็มเชื่อมต่อกับระบบเครือข่ายเสมือนภายใน และสื่อสารกับระบบเครือข่ายภายนอกผ่านเร้าเตอร์เสมือนเท่านั้น และ
+<li>ไม่รองรับการเชื่อมต่อวีเอ็มโดยตรงกับ Provider Network และ ไม่รองรับ Distributed Virtual Router 
+</ol>
+ผู้อ่านต้องเติมค่าในช่องว่างในภาพทุกช่อง ซึ่งแต่ละช่องมีความหมายต่อไปนี้
+<table border="1px">
+<tr>
+  <th>ชื่อ</th>
+  <th>ความหมาย</th>
+</tr>
+<tr>
+  <td>
+    Management Net CIDR:
+  </td>
+  <td>
+    Subnet (แบบ CIDR) ของ Management Network 
+  </td>
+</tr>
+<tr>
+  <td>
+    Nic01:
+  </td>
+  <td>
+    ชื่อ Network Interface Card (NIC) ที่เชื่อมต่อกับ Management Network ของเครื่องโฮสต์แต่ละเครื่อง
+  </td>
+</tr>
+<tr>
+  <td>
+    IP 01:
+  </td>
+  <td>
+    ชื่อ IP address ที่เชื่อมต่อ Management Network ของเครื่องโฮสต์แต่ละเครื่อง
+  </td>
+</tr>
+<tr>
+  <td>
+    Host: 
+  </td>
+  <td>
+    ชื่อของเครื่องโฮสต์
+  </td>
+</tr>
+<tr>
+  <td>
+    User: 
+  </td>
+  <td>
+    ชื่อบัญชีผู้ใช้สำหรับติดตัั้งระบบโอเพ่นสแตคด้วย kolla-ansible กำหนดให้ใช้ชื่อเดียวกันทุกเคร่ื่อง
+  </td>
+</tr>
+<tr>
+  <td>
+    VIP IP:
+  </td>
+  <td>
+    ค่า IP Address สำหรับเข้าถึง Web Interfaces และ API ของโอเพ่นสแตค
+  </td>
+</tr>
+<tr>
+  <td>
+    Nic 02: (บน controller)   
+  </td>
+  <td>
+    ชื่อ NIC สำหรับเชื่อมต่อกับ external network 
+    เพื่อทดสอบว่าผู้ใช้สามารถเข้าถึงวีเอ็มในระบบโอเพ่นสแตคจากเครื่อง controller ได้ ค่านี้เป็นทางเลือก (Optional) 
+    ที่ผู้ติดตั้งเลือกที่จะใส่ค่าชื่อ NIC หรือไม่ใส่ก็ได้
+  </td>
+</tr>
+<tr>
+  <td>
+    Nic 02: (บน network และ compute โฮสต์) 
+  </td>
+  <td>
+    ชื่อ NIC ที่เชื่อมต่อกับ Tunnel Network
+  </td>
+</tr>
+<tr>
+  <td>
+    IP 02: (บน network และ compute โฮสต์)  
+  </td>
+  <td>
+    IP Address ของ NIC ทีเชื่อมต่อกับ Tunnel Network่
+  </td>
+</tr>
+<tr>
+  <td>
+    Tunnel Net CIDR:
+  </td>
+  <td>
+    Subnet (แบบ CIDR) ของ Tunnel Network
+  </td>
+</tr>
+<tr>
+  <td>
+    Nic 03: (บน network โฮสต์)  
+  </td>
+  <td>
+    ชื่อ NIC ที่เชื่อมต่อกับ External Network 
+  </td>
+</tr>
+<tr>
+  <td>
+    External Network CIDR: 
+  </td>
+  <td>
+    Subnet (แบบ CIDR) ของ External Network
+  </td>
+</tr>
+<tr>
+  <td>
+    Ext Net Gateway: 
+  </td>
+  <td>
+    IP Address ของ Router Gateway ของ External network
+  </td>
+</tr>
+<tr>
+  <td>
+    StartIP
+  </td>
+  <td>
+    IP Address แรกบน External Network ที่ผู้ดูแลระบบจัดสรรให้ระบบโอเพ่นสแตคใช้เป็น Floating IP 
+  </td>
+</tr>
+<tr>
+  <td>
+    EndIP
+  </td>
+  <td>
+    IP Address สุดท้ายบน External Network ที่ผู้ดูแลระบบจัดสรรให้ระบบโอเพ่นสแตคใช้เป็น Floating IP 
+  </td>
+</tr>
+</table>
 <p>
 <ul>
 <li><a href="https://youtu.be/kHb9QgPDA78">วิดีโอแสดงตัวอย่างการใช้งาน helper เว็บเพจนี้</a>
