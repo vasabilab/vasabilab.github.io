@@ -106,7 +106,22 @@
 <li>กำหนดให้วีเอ็มเชื่อมต่อกับระบบเครือข่ายเสมือนภายใน และสื่อสารกับระบบเครือข่ายภายนอกผ่านเร้าเตอร์เสมือนเท่านั้น และ
 <li>ไม่รองรับการเชื่อมต่อวีเอ็มโดยตรงกับ Provider Network และ ไม่รองรับ Distributed Virtual Router 
 </ol>
-ผู้อ่านต้องเติมค่าในช่องว่างในภาพทุกช่อง ซึ่งแต่ละช่องมีความหมายต่อไปนี้
+<p>
+เครื่องโฮสต์ที่ใช้มี Specification ขั้นต่ำดังนี้ 
+<table border=""1">
+  <tr><th>Name</th><th>CPU core</th><th>Ram</th><th>Storage</th><th>Nic</th></tr>
+  <tr><td>controller01</td><td>6</td><td>16G</td><td>80G</td><td>2</td></tr>
+  <tr><td>network01</td><td>4</td><td>10G</td><td>80G</td><td>3</td></tr>
+  <tr><td>compute01</td><td>6</td><td>16G</td><td>100G,80G(for cinder)</td><td>2</td></tr>
+  <tr><td>compute01</td><td>6</td><td>16G</td><td>100G,80G</td><td>2</td></tr>
+</table>
+<p>
+หมายเหตุ: ผู้เขียนสร้างวีเอ็มโดยใช้ซอฟต์แวร์ qemu-kvm และ cloud-init และใช้วีเอ็มเหล่านั้นเป็นเครื่องโฮสต์ 
+ผู้อ่านสามารถดาวร์โหลด script สำหรับสร้างวีเอ็มเหล่านี้ได้ที่ 
+<a href="kolla-hosts.tar">kolla-hosts.tar</a>
+</p>
+ในการใช้งานเว็บเพจ helper นี้ ผู้อ่านต้องเติมค่าในช่องว่างในภาพทุกช่อง ซึ่งแต่ละช่องมีความหมายต่อไปนี้
+<p>
 <table border="1px">
 <tr>
   <th>ชื่อ</th>
